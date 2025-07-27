@@ -2,39 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Modern Cloud Storage Design System inspired by the provided interface */
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    /* Light blue gradient background */
+    --background: 194 100% 85%;
     --foreground: 222.2 84% 4.9%;
 
+    /* Clean white cards */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 217.2 91.2% 59.8%;
+    /* Deep blue primary color */
+    --primary: 217 91% 25%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
+    /* Light gray secondary */
+    --secondary: 220 14% 96%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
+    --muted: 220 14% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 142.1 76.2% 36.3%;
+    /* Teal accent color */
+    --accent: 174 72% 56%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 217.2 91.2% 59.8%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 217 91% 25%;
 
     --success: 142.1 76.2% 36.3%;
     --success-foreground: 0 0% 100%;
@@ -42,56 +45,54 @@ All colors MUST be HSL.
     --warning: 48 96% 53%;
     --warning-foreground: 26 83% 14%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(217.2 91.2% 59.8%), hsl(142.1 76.2% 36.3%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 40% 98%));
+    /* Modern gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 25%), hsl(174 72% 56%));
+    --gradient-background: linear-gradient(135deg, hsl(194 100% 85%), hsl(194 100% 90%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(220 14% 98%));
     
-    --shadow-card: 0 4px 6px -1px hsl(217.2 91.2% 59.8% / 0.1);
-    --shadow-hover: 0 10px 25px -3px hsl(217.2 91.2% 59.8% / 0.1);
+    /* Soft shadows */
+    --shadow-card: 0 4px 20px -2px hsl(217 91% 25% / 0.08);
+    --shadow-hover: 0 8px 30px -4px hsl(217 91% 25% / 0.12);
+    --shadow-sidebar: 4px 0 20px -2px hsl(217 91% 25% / 0.08);
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Sidebar colors - deep blue */
+    --sidebar-background: 217 91% 25%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 217 91% 25%;
+    --sidebar-accent: 217 91% 30%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 217 91% 30%;
+    --sidebar-ring: 174 72% 56%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Category colors */
+    --category-purple: 258 90% 66%;
+    --category-teal: 174 72% 56%;
+    --category-pink: 330 81% 60%;
+    --category-blue: 217 91% 60%;
+    --category-orange: 25 95% 53%;
+    --category-green: 142 76% 36%;
   }
 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
-
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
@@ -112,6 +113,265 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: var(--gradient-background);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* Responsive Layout */
+  .responsive-container {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .responsive-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+  }
+
+  .responsive-grid-2 {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6;
+  }
+
+  /* Modern card styles */
+  .modern-card {
+    @apply bg-card rounded-2xl shadow-[var(--shadow-card)] border-0 backdrop-blur-sm;
+    background: var(--gradient-card);
+  }
+
+  .modern-card:hover {
+    @apply shadow-[var(--shadow-hover)];
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+
+  /* Category card styles */
+  .category-card {
+    @apply rounded-2xl p-4 sm:p-6 text-white font-medium text-sm flex flex-col items-start justify-between min-h-[100px] sm:min-h-[120px] relative overflow-hidden;
+    transition: all 0.3s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    @apply shadow-[var(--shadow-hover)];
+  }
+
+  .category-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/20 to-transparent;
+  }
+
+  /* Wizard Form Styles */
+  .wizard-container {
+    @apply modern-card p-6 sm:p-8 max-w-2xl mx-auto;
+  }
+
+  .wizard-header {
+    @apply mb-8;
+  }
+
+  .wizard-progress {
+    @apply flex items-center justify-between mb-6;
+  }
+
+  .wizard-step {
+    @apply flex items-center space-x-2 text-sm font-medium;
+  }
+
+  .wizard-step.active {
+    @apply text-[hsl(var(--primary))];
+  }
+
+  .wizard-step.completed {
+    @apply text-[hsl(var(--success))];
+  }
+
+  .wizard-step.inactive {
+    @apply text-gray-400;
+  }
+
+  .wizard-step-number {
+    @apply w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold;
+  }
+
+  .wizard-step.active .wizard-step-number {
+    @apply bg-[hsl(var(--primary))] text-white;
+  }
+
+  .wizard-step.completed .wizard-step-number {
+    @apply bg-[hsl(var(--success))] text-white;
+  }
+
+  .wizard-step.inactive .wizard-step-number {
+    @apply bg-gray-200 text-gray-500;
+  }
+
+  .wizard-content {
+    @apply min-h-[300px] sm:min-h-[400px];
+  }
+
+  .wizard-form-group {
+    @apply space-y-4 sm:space-y-6;
+  }
+
+  .wizard-form-row {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+  }
+
+  .wizard-actions {
+    @apply flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 pt-6 border-t border-gray-200;
+  }
+
+  .wizard-button-group {
+    @apply flex space-x-3;
+  }
+
+  /* Responsive Form Elements */
+  .form-field {
+    @apply space-y-2;
+  }
+
+  .form-label {
+    @apply text-sm font-medium text-gray-700;
+  }
+
+  .form-input {
+    @apply modern-input w-full px-4 py-3 text-base focus:ring-2 focus:ring-[hsl(var(--primary))]/20 focus:border-[hsl(var(--primary))] transition-all duration-200;
+  }
+
+  .form-select {
+    @apply form-input appearance-none bg-white;
+  }
+
+  .form-textarea {
+    @apply form-input resize-none min-h-[100px];
+  }
+
+  .form-error {
+    @apply text-sm text-red-600 mt-1;
+  }
+
+  /* Sidebar styles */
+  .modern-sidebar {
+    @apply bg-[hsl(var(--sidebar-background))] text-[hsl(var(--sidebar-foreground))] fixed left-0 top-0 h-full w-72 transform transition-transform duration-300 ease-in-out z-50;
+    box-shadow: var(--shadow-sidebar);
+  }
+
+  .modern-sidebar.mobile-hidden {
+    @apply -translate-x-full md:translate-x-0;
+  }
+
+  .modern-sidebar.mobile-visible {
+    @apply translate-x-0;
+  }
+
+  .sidebar-overlay {
+    @apply fixed inset-0 bg-black/50 z-40 md:hidden;
+  }
+
+  /* Button styles */
+  .modern-button {
+    @apply rounded-xl font-medium transition-all duration-300 px-4 py-2 sm:px-6 sm:py-3;
+  }
+
+  .modern-button:hover {
+    transform: translateY(-1px);
+  }
+
+  .modern-button-primary {
+    @apply modern-button bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary))]/90;
+  }
+
+  .modern-button-secondary {
+    @apply modern-button bg-gray-200 text-gray-700 hover:bg-gray-300;
+  }
+
+  .modern-button-outline {
+    @apply modern-button border-2 border-[hsl(var(--primary))] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-white;
+  }
+
+  /* Input styles */
+  .modern-input {
+    @apply rounded-xl border-0 bg-white/80 backdrop-blur-sm;
+    box-shadow: 0 2px 10px -2px hsl(217 91% 25% / 0.06);
+  }
+
+  /* File item styles */
+  .file-item {
+    @apply bg-white/60 backdrop-blur-sm rounded-xl p-3 sm:p-4 border-0 hover:bg-white/80 transition-all duration-300;
+    box-shadow: 0 2px 8px -2px hsl(217 91% 25% / 0.06);
+  }
+
+  .file-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px -3px hsl(217 91% 25% / 0.1);
+  }
+
+  /* Responsive utilities */
+  .mobile-menu-button {
+    @apply md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white/90 backdrop-blur-sm shadow-lg;
+  }
+
+  .main-content {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .main-content.sidebar-open {
+    @apply md:ml-72;
+  }
+
+  .main-content.sidebar-closed {
+    @apply ml-0;
+  }
+
+  /* Responsive text sizes */
+  .responsive-title {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-bold;
+  }
+
+  .responsive-subtitle {
+    @apply text-lg sm:text-xl lg:text-2xl font-semibold;
+  }
+
+  .responsive-body {
+    @apply text-sm sm:text-base;
+  }
+
+  /* Card responsive spacing */
+  .card-padding {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+
+  .card-margin {
+    @apply m-4 sm:m-6 lg:m-8;
+  }
+}
+
+/* Mobile-first responsive breakpoints */
+@media (max-width: 640px) {
+  .wizard-container {
+    @apply mx-4 p-4;
+  }
+  
+  .category-card {
+    @apply min-h-[80px] p-3;
+  }
+  
+  .modern-sidebar {
+    @apply w-64;
+  }
+}
+
+@media (max-width: 480px) {
+  .wizard-progress {
+    @apply flex-col space-y-2;
+  }
+  
+  .wizard-step {
+    @apply w-full justify-center;
+  }
+  
+  .responsive-grid {
+    @apply grid-cols-1 gap-3;
   }
 }

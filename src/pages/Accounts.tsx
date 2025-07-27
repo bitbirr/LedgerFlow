@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Wizard, WizardField, WizardFormRow, type WizardStep } from "@/components/ui/wizard";
 import { useToast } from "@/hooks/use-toast";
 import {
   Plus,
@@ -21,7 +22,9 @@ import {
   MapPin,
   Edit,
   Trash2,
-  Eye
+  User,
+  Building,
+  DollarSign
 } from "lucide-react";
 
 interface Account {
@@ -67,7 +70,7 @@ const Accounts = () => {
     category_id: "",
     opening_balance: 0,
     credit_limit: 0,
-    status: "active" as const
+    status: "active" as "active" | "inactive" | "blocked"
   });
 
   useEffect(() => {
@@ -121,8 +124,7 @@ const Accounts = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleWizardSubmit = async (data: any) => {
     setLoading(true);
 
     try {
@@ -130,9 +132,9 @@ const Accounts = () => {
       if (!user) return;
 
       const accountData = {
-        ...formData,
+        ...data,
         user_id: user.id,
-        current_balance: formData.opening_balance
+        current_balance: data.opening_balance
       };
 
       if (editingAccount) {
@@ -222,8 +224,12 @@ const Accounts = () => {
       category_id: "",
       opening_balance: 0,
       credit_limit: 0,
-      status: "active"
+      status: "active" as "active" | "inactive" | "blocked"
     });
+  };
+
+  const handleWizardComplete = async () => {
+    await handleWizardSubmit(formData);
   };
 
   const filteredAccounts = accounts.filter(account => {
@@ -255,23 +261,141 @@ const Accounts = () => {
     );
   };
 
+  const wizardSteps: WizardStep[] = [
+    {
+      id: "basic",
+      title: "Basic Information",
+      description: "Enter the basic account details",
+      content: (
+        <div className="space-y-4">
+          <WizardField label="Name" required>
+            <Input
+              name="name"
+              placeholder="Enter account name"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              required
+            />
+          </WizardField>
+          <WizardField label="Phone">
+            <Input
+              name="phone"
+              placeholder="Enter phone number"
+              value={formData.phone}
+              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+            />
+          </WizardField>
+          <WizardField label="Email">
+            <Input
+              name="email"
+              type="email"
+              placeholder="Enter email address"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+            />
+          </WizardField>
+        </div>
+      )
+    },
+    {
+      id: "details",
+      title: "Account Details",
+      description: "Configure account settings and category",
+      content: (
+        <div className="space-y-4">
+          <WizardField label="Address">
+            <Input
+              name="address"
+              placeholder="Enter address"
+              value={formData.address}
+              onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+            />
+          </WizardField>
+          <WizardField label="Category">
+            <Select 
+              value={formData.category_id} 
+              onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </WizardField>
+          <WizardField label="Status">
+            <Select 
+              value={formData.status} 
+              onValueChange={(value) => setFormData(prev => ({ ...prev, status: value as "active" | "inactive" | "blocked" }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="blocked">Blocked</SelectItem>
+              </SelectContent>
+            </Select>
+          </WizardField>
+        </div>
+      )
+    },
+    {
+      id: "financial",
+      title: "Financial Settings",
+      description: "Set opening balance and credit limits",
+      content: (
+        <div className="space-y-4">
+          <WizardFormRow>
+            <WizardField label="Opening Balance">
+              <Input
+                name="opening_balance"
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                value={formData.opening_balance}
+                onChange={(e) => setFormData(prev => ({ ...prev, opening_balance: Number(e.target.value) }))}
+              />
+            </WizardField>
+            <WizardField label="Credit Limit">
+              <Input
+                name="credit_limit"
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                value={formData.credit_limit}
+                onChange={(e) => setFormData(prev => ({ ...prev, credit_limit: Number(e.target.value) }))}
+              />
+            </WizardField>
+          </WizardFormRow>
+        </div>
+      )
+    }
+  ];
+
   return (
     <Layout>
       <Navigation />
       <div className="md:ml-64">
-        <div className="p-6 space-y-6">
+        <div className="responsive-container p-4 md:p-6 space-y-6">
           <PageHeader
             title="Accounts"
             description="Manage your customers and suppliers"
             action={
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button onClick={() => { resetForm(); setEditingAccount(null); }}>
+                  <Button onClick={() => { resetForm(); setEditingAccount(null); }} className="w-full sm:w-auto">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Account
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>
                       {editingAccount ? "Edit Account" : "Add New Account"}
@@ -280,100 +404,13 @@ const Accounts = () => {
                       {editingAccount ? "Update account information" : "Create a new customer or supplier account"}
                     </DialogDescription>
                   </DialogHeader>
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name *</Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input
-                        id="phone"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="address">Address</Label>
-                      <Input
-                        id="address"
-                        value={formData.address}
-                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
-                      <Select value={formData.category_id} onValueChange={(value) => setFormData({ ...formData, category_id: value })}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="opening_balance">Opening Balance</Label>
-                        <Input
-                          id="opening_balance"
-                          type="number"
-                          step="0.01"
-                          value={formData.opening_balance}
-                          onChange={(e) => setFormData({ ...formData, opening_balance: parseFloat(e.target.value) || 0 })}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="credit_limit">Credit Limit</Label>
-                        <Input
-                          id="credit_limit"
-                          type="number"
-                          step="0.01"
-                          value={formData.credit_limit}
-                          onChange={(e) => setFormData({ ...formData, credit_limit: parseFloat(e.target.value) || 0 })}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="status">Status</Label>
-                      <Select value={formData.status} onValueChange={(value: any) => setFormData({ ...formData, status: value })}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="active">Active</SelectItem>
-                          <SelectItem value="inactive">Inactive</SelectItem>
-                          <SelectItem value="blocked">Blocked</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex justify-end space-x-2">
-                      <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button type="submit" disabled={loading}>
-                        {loading ? "Saving..." : editingAccount ? "Update" : "Create"}
-                      </Button>
-                    </div>
-                  </form>
+                  
+                  <Wizard
+                    steps={wizardSteps}
+                    onComplete={handleWizardComplete}
+                    onCancel={() => setIsDialogOpen(false)}
+                    className="mt-4"
+                  />
                 </DialogContent>
               </Dialog>
             }
@@ -382,8 +419,8 @@ const Accounts = () => {
           {/* Filters */}
           <Card>
             <CardContent className="p-4">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1">
+              <div className="responsive-grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="md:col-span-3">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
@@ -395,7 +432,7 @@ const Accounts = () => {
                   </div>
                 </div>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-full sm:w-48">
+                  <SelectTrigger>
                     <SelectValue placeholder="Filter by category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -428,97 +465,120 @@ const Accounts = () => {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </div>
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Current Balance</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredAccounts.length === 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                          No accounts found
-                        </TableCell>
+                        <TableHead className="min-w-[200px]">Name</TableHead>
+                        <TableHead className="min-w-[150px] hidden sm:table-cell">Contact</TableHead>
+                        <TableHead className="min-w-[120px] hidden md:table-cell">Category</TableHead>
+                        <TableHead className="min-w-[120px]">Balance</TableHead>
+                        <TableHead className="min-w-[100px] hidden lg:table-cell">Status</TableHead>
+                        <TableHead className="text-right min-w-[100px]">Actions</TableHead>
                       </TableRow>
-                    ) : (
-                      filteredAccounts.map((account) => (
-                        <TableRow key={account.id}>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium">{account.name}</p>
-                              {account.address && (
-                                <p className="text-sm text-muted-foreground flex items-center">
-                                  <MapPin className="h-3 w-3 mr-1" />
-                                  {account.address}
-                                </p>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-1">
-                              {account.phone && (
-                                <p className="text-sm flex items-center">
-                                  <Phone className="h-3 w-3 mr-1" />
-                                  {account.phone}
-                                </p>
-                              )}
-                              {account.email && (
-                                <p className="text-sm flex items-center">
-                                  <Mail className="h-3 w-3 mr-1" />
-                                  {account.email}
-                                </p>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {account.categories && (
-                              <Badge 
-                                variant="outline" 
-                                style={{ borderColor: account.categories.color, color: account.categories.color }}
-                              >
-                                {account.categories.name}
-                              </Badge>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <span className={`font-medium ${
-                              account.current_balance >= 0 ? 'text-success' : 'text-destructive'
-                            }`}>
-                              {formatCurrency(account.current_balance)}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            {getStatusBadge(account.status)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end space-x-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEdit(account)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDelete(account.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredAccounts.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                            No accounts found
                           </TableCell>
                         </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+                      ) : (
+                        filteredAccounts.map((account) => (
+                          <TableRow key={account.id}>
+                            <TableCell>
+                              <div>
+                                <p className="font-medium">{account.name}</p>
+                                {account.address && (
+                                  <p className="text-sm text-muted-foreground flex items-center mt-1">
+                                    <MapPin className="h-3 w-3 mr-1" />
+                                    {account.address}
+                                  </p>
+                                )}
+                                {/* Show contact info on mobile */}
+                                <div className="sm:hidden mt-1 space-y-1">
+                                  {account.phone && (
+                                    <p className="text-sm flex items-center">
+                                      <Phone className="h-3 w-3 mr-1" />
+                                      {account.phone}
+                                    </p>
+                                  )}
+                                  {account.email && (
+                                    <p className="text-sm flex items-center">
+                                      <Mail className="h-3 w-3 mr-1" />
+                                      {account.email}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="hidden sm:table-cell">
+                              <div className="space-y-1">
+                                {account.phone && (
+                                  <p className="text-sm flex items-center">
+                                    <Phone className="h-3 w-3 mr-1" />
+                                    {account.phone}
+                                  </p>
+                                )}
+                                {account.email && (
+                                  <p className="text-sm flex items-center">
+                                    <Mail className="h-3 w-3 mr-1" />
+                                    {account.email}
+                                  </p>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              {account.categories && (
+                                <Badge 
+                                  variant="outline" 
+                                  style={{ borderColor: account.categories.color, color: account.categories.color }}
+                                >
+                                  {account.categories.name}
+                                </Badge>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <span className={`font-medium ${
+                                  account.current_balance >= 0 ? 'text-success' : 'text-destructive'
+                                }`}>
+                                  {formatCurrency(account.current_balance)}
+                                </span>
+                                {/* Show status on mobile */}
+                                <div className="lg:hidden mt-1">
+                                  {getStatusBadge(account.status)}
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="hidden lg:table-cell">
+                              {getStatusBadge(account.status)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end space-x-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEdit(account)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDelete(account.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </CardContent>
           </Card>

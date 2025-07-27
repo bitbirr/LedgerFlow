@@ -447,4 +447,44 @@ const Settings = () => {
             </Card>
 
             {/* Application Info */}
-            <Card></Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <SettingsIcon className="h-5 w-5 mr-2" />
+                  Application Information
+                </CardTitle>
+                <CardDescription>
+                  Information about LedgerFlow application
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Version</p>
+                      <p className="text-sm text-muted-foreground">
+                        Current application version
+                      </p>
+                    </div>
+                    <Badge variant="outline">v1.0.0</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Last Updated</p>
+                      <p className="text-sm text-muted-foreground">
+                        When the application was last updated
+                      </p>
+                    </div>
+                    <Badge variant="outline">Today</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+};
+
+export default Settings;

@@ -1,73 +1,131 @@
-# Welcome to your Lovable project
+SmartLedger is a web application for managing credit ledger account books, daily sales, inventory, cashbook, and debt management. It is designed to replace traditional paper ledgers and cashbooks, making it ideal for small businesses, shopkeepers, wholesalers, retailers, and distributors.
+LedgerFlow cashbook application with the following key features:
 
-## Project info
+🎨 Design System
+Professional blue and green gradient theme
+Semantic color tokens for consistent branding
+Custom shadows and hover effects
+Mobile-responsive design
 
-**URL**: https://lovable.dev/projects/c9e2f3f5-b0d4-43f7-8786-a644d04c80cf
+🏗️ Database Architecture
 
-## How can I edit this code?
+Categories: Organize accounts by type (customers, suppliers, shops)
+Accounts: Customer/supplier profiles with contact details and balances
+Transactions: Credit/debit entries with running balance calculation
+Cashbook Entries: Business expense tracking
+Payment Reminders: Automated reminder system
+Secure Row Level Security (RLS) policies
+Automatic balance calculation triggers
 
-There are several ways of editing your application.
+🚀 Core Features Built
 
-**Use Lovable**
+- Landing Page
+= Professional hero section showcasing key benefits
+- Feature highlights for business users
+- Clear call-to-action for registration
+- Authentication System
+- Email/password registration and login
+- Secure session management
+- Auto-redirect for authenticated users
+- Password visibility toggle
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c9e2f3f5-b0d4-43f7-8786-a644d04c80cf) and start prompting.
+Dashboard
 
-Changes made via Lovable will be committed automatically to this repo.
+Real-time financial overview
+Key metrics: Total accounts, receivables, payables, net balance
+Recent transactions list
+Overdue payments alerts
+Beautiful stat cards with trend indicators
+Navigation
+Responsive sidebar navigation
+Professional branding with LedgerFlow logo
+Mobile-friendly hamburger menu
+Clean route structure
 
-**Use your preferred IDE**
+🎯 User Experience
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Intuitive Interface: Clean, professional design focusing on usability
+- Mobile-First: Responsive design works on all devices
+- Real-Time Updates: Live balance calculations and transaction tracking
+- Visual Feedback: Color-coded transaction types, status badges
+= Professional Appearance: Builds trust for business use
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+💼 Business Value
 
-Follow these steps:
+- Replace Traditional Ledgers: Digital alternative to paper ledgers
+- Customer Management: Organized account tracking with categories
+- Credit/Debt Monitoring: Clear visibility of who owes what
+- Payment Tracking: Due date monitoring and overdue alerts
+- Professional Reports: Data ready for Excel/PDF export (extensible)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Users can start managing their business accounts, track transactions, and monitor cash flow. Users can register, log in, and immediately see their financial dashboard with all the core functionality of a modern digital ledger system.
 
-# Step 3: Install the necessary dependencies.
-npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## Technical Features
 
-**Edit a file directly in GitHub**
+- **Customer Credit & Debit Ledger:**  
+  Maintain customer credit, debit, and ledger accounts. Track investments and all monetary transactions with ease.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- **Account & Category Management:**  
+  Create accounts for customers, suppliers, or any entity. Organize accounts into categories (e.g., by shop, customer type) for easy sorting and viewing.
 
-**Use GitHub Codespaces**
+- **Transaction Management:**  
+  - Add credit or debit entries for each account.
+  - Attach narrations and upload photos of bills/receipts for each transaction.
+  - Edit or delete transaction entries as needed.
+  - View running balance after each transaction.
+  - Generate and share invoices with customers.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **Reporting:**  
+  - Dashboard displays all accounts and their current balances.
+  - Separate tabs for creditors and debtors.
+  - Generate transaction reports for daily, weekly, monthly, or custom date ranges.
+  - Export reports in Excel and PDF formats.
 
-## What technologies are used for this project?
+- **Cashbook:**  
+  Record and manage business expenses in a dedicated cashbook.
 
-This project is built with:
+- **Payment Reminders:**  
+  - Send payment reminders with transaction details and bills/receipts to customers.
+  - Set self-reminders for payments; receive notifications on due dates.
+  - Call debtors and creditors directly from the app.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Data Privacy & Security:**  
+  - All data is stored locally on your device or in your Google Drive folder—never on external servers.
+  - Password and fingerprint protection for app access.
+  - Google Drive backup and restore support.
+  - Offline functionality.
 
-## How can I deploy this project?
+- **Widgets & Quick Entry:**  
+  Add a widget to your home screen for fast and easy transaction entry.
 
-Simply open [Lovable](https://lovable.dev/projects/c9e2f3f5-b0d4-43f7-8786-a644d04c80cf) and click on Share -> Publish.
+## Example Use Cases
 
-## Can I connect a custom domain to my Lovable project?
+- Categorize accounts as customers or suppliers.
+- Group accounts by different shops for multi-location businesses.
+- Track debts and credits with friends, family, or business partners.
+- Quickly know who owes you money and whom you owe.
 
-Yes, you can!
+## Database Schema
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+The backend uses PostgreSQL with the following structure:
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- **Enum Types:**  
+  - `transaction_type`: `credit`, `debit`
+  - `account_status`: `active`, `inactive`, `blocked`
+  - `payment_status`: `pending`, `partially_paid`, `paid`, `overdue`
+
+- **Tables:**  
+  - `categories`: Organize accounts into categories.
+  - `accounts`: Store customer/supplier details and balances.
+  - `transactions`: Record all credit/debit entries.
+  - `cashbook_entries`: Track business expenses.
+  - `payment_reminders`: Manage and send payment reminders.
+
+- **Security:**  
+  - Row Level Security (RLS) ensures users can only access their own data.
+  - Policies restrict access to each user's records.
+
+- **Triggers & Functions:**  
+  - Automatic calculation of account balances and running balances after each transaction.
